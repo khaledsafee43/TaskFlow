@@ -1,9 +1,9 @@
-
+import Login from "./pages/auth/Login"
 function App() {
 
   return (
     <>
-      <h1>App.jsx</h1>
+      <Login/>
     </>
   )
 }
