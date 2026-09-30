@@ -1,12 +1,30 @@
-import { EyeIcon, EyeClosedIcon, ArrowRightIcon } from "lucide-react";
+import {
+  EyeIcon,
+  EyeClosedIcon,
+  ArrowRightIcon,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { useState } from "react";
 export default function Login() {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmePassword, setConfirmePassword] = useState("");
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  const passwordChecks = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    symbol: /[^A-Za-z0-9]/.test(password),
+  };
+  const strength = Object.values(passwordChecks).filter(Boolean).length;
+  const passwordMatch = confirmePassword && confirmePassword === password;
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [termsTouched, setTermsTouched] = useState(false);
+  const isValidForm =
+    fullName && email && password && agreeTerms && termsTouched;
   return (
     <main className="min-h-[884px] w-full flex items-center justify-center p-gutter relative bg-surface-container-low/40">
       <div className="relative bg-surface-container-lowest rounded-xl shadow-xl p-8 transition-all">
@@ -45,11 +63,21 @@ export default function Login() {
                 onChange={(e) => setFullName(e.target.value)}
                 value={fullName}
                 placeholder="Enter your name"
-                className="w-full h-[40px] outline-none pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-blue-600/50"
+                className={`w-full h-[40px] outline-none pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow  focus:ring-2 focus:ring-blue-600/50 
+                    ${
+                      fullName.length !== 0
+                        ? fullName.length < 3 || fullName.length > 15
+                          ? "border-red-400 focus:ring-2 focus:ring-red-400"
+                          : "border-2 border-green-400 focus:ring-2 focus:ring-green-400/50"
+                        : ""
+                    }
+                  `}
               />
-              <p className="text-red-600">
-                {fullName.length < 3 && fullName.length !== 0 && "invalid name"}
-              </p>
+              {fullName.length >= 3 && fullName.length < 15 && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-green-900 py-0.3 px-1.5 text-white font-bold inline-block rounded-full">
+                  ✓
+                </span>
+              )}
             </div>
           </div>
           <div>
@@ -66,13 +94,19 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 placeholder="name@example.com"
-                className="w-full h-[40px] outline-none pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-blue-600/50"
+                className={`w-full h-[40px] outline-none pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow focus:ring-2 focus:ring-blue-600/50         ${
+                  email
+                    ? emailRegex.test(email)
+                      ? "border-2 border-green-400 focus:ring-2 focus:ring-green-400/50"
+                      : "border-red-400 focus:ring-2 focus:ring-red-400"
+                    : ""
+                }`}
               />
-              <p className="text-red-600">
-                {!email.includes("@gmail.com") &&
-                  email.length !== 0 &&
-                  "Invalid Email"}
-              </p>
+              {email.includes("@gmail.com") && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-green-900 py-0.3 px-1.5 text-white font-bold inline-block rounded-full">
+                  ✓
+                </span>
+              )}
             </div>
           </div>
           <div>
@@ -83,13 +117,21 @@ export default function Login() {
               >
                 Password
               </label>
-              <button onClick={() => setShow(!show)}>
-                {show ? <EyeIcon /> : <EyeClosedIcon />}
+              <button
+                type="button"
+                onClick={() => setShow(!show)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                {show ? (
+                  <Eye className="h-5 w-5" />
+                ) : (
+                  <EyeOff className="h-5 w-5" />
+                )}
               </button>
             </div>
             <div className="relative">
               <input
-                type="password"
+                type={show ? "text" : "password"}
                 id="password"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
@@ -101,19 +143,61 @@ export default function Login() {
                   "Your password must be greater than 6"}
               </p>
             </div>
-            <div>
-              <p>
-                <span></span>
-              </p>
-              <p>
-                <span></span>
-              </p>
-              <p>
-                <span></span>
-              </p>
-              <p>
-                <span></span>
-              </p>
+            {/* Check the password  */}
+            <div className="mt-2 rounded-lg bg-slate-50 p-3">
+              <div className="mb-2 flex justify-between text-xs">
+                <span className="text-slate-500">Strength Assessment</span>
+
+                <span className="font-medium text-green-600">
+                  {strength === 3
+                    ? "Strong"
+                    : strength === 2
+                      ? "Medium"
+                      : "Weak"}
+                </span>
+              </div>
+
+              <div className="h-1.5 rounded-full bg-slate-200">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${
+                    strength === 1
+                      ? "w-1/3 bg-red-500"
+                      : strength === 2
+                        ? "w-2/3 bg-yellow-500"
+                        : strength === 3
+                          ? "w-full bg-green-600"
+                          : "w-0"
+                  }`}
+                />
+              </div>
+
+              <div className="mt-2 flex gap-3 text-[10px]">
+                <span
+                  className={
+                    passwordChecks.length ? "text-green-600" : "text-gray-400"
+                  }
+                >
+                  ✓ 8+ chars
+                </span>
+
+                <span
+                  className={
+                    passwordChecks.uppercase
+                      ? "text-green-600"
+                      : "text-gray-400"
+                  }
+                >
+                  ✓ Uppercase
+                </span>
+
+                <span
+                  className={
+                    passwordChecks.symbol ? "text-green-600" : "text-gray-400"
+                  }
+                >
+                  ✓ Symbol
+                </span>
+              </div>
             </div>
           </div>
           <div className="flex flex-col">
@@ -125,33 +209,57 @@ export default function Login() {
             </label>
             <div className="relative">
               <input
-                type="password"
+                type={show ? "text" : "password"}
                 id="confirmPassword"
                 onChange={(e) => setConfirmePassword(e.target.value)}
                 value={confirmePassword}
                 className="w-full h-[40px] outline-none pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-blue-600/50"
               />
-              <p>{confirmePassword.length !== password.length && "Must be equal to your password"}</p>
+              {confirmePassword && (
+                <p
+                  className={`mt-1 text-xs ${
+                    passwordMatch ? "text-green-600" : "text-red-500"
+                  }`}
+                >
+                  {passwordMatch
+                    ? "✓ Passwords match"
+                    : "✕ Passwords do not match"}
+                </p>
+              )}
             </div>
-            <p></p>
           </div>
-          <div className="flex gap-1 py-3">
-            <input type="checkbox" />
-            <p className="text-gray-500">
-              I agree to the{" "}
-              <span className="text-blue-900 font-medium">
-                {" "}
-                Terms of Services
-              </span>{" "}
-              and{" "}
-              <span className="text-blue-900 font-semibold">
-                Privacy Policy
-              </span>
-            </p>
+          <div className="flex flex-col gap-1 py-3">
+            <div className="flex items-center justify-between gap-1">
+              <input
+                type="checkbox"
+                checked={agreeTerms}
+                onChange={(e) => {
+                  setAgreeTerms(e.target.checked);
+                  setTermsTouched(true);
+                }}
+              />
+              <p className="text-gray-500">
+                I agree to{" "}
+                <span className="font-medium text-blue-900">
+                  Terms of Services
+                </span>{" "}
+                and{" "}
+                <span className="font-semibold text-blue-900">
+                  Privacy Policy
+                </span>
+              </p>
+            </div>
+            {termsTouched && !agreeTerms && (
+              <p className="text-xs text-red-500">
+                You must agree to the Terms of Services and Privacy Policy
+              </p>
+            )}
           </div>
-          <button className="bg-blue-800 flex justify-center items-center gap-2 text-white py-3 px-4 rounded-md hover:bg-blue-700">
-            Create Account <ArrowRightIcon />
-          </button>
+          {isValidForm && (
+            <button className="bg-blue-800 flex justify-center items-center gap-2 text-white py-3 px-4 rounded-md hover:bg-blue-700">
+              Create Account <ArrowRightIcon />
+            </button>
+          )}
         </form>
       </div>
     </main>
