@@ -2,6 +2,11 @@ import { EyeIcon, EyeClosedIcon, ArrowRightIcon } from "lucide-react";
 import { useState } from "react";
 export default function Login() {
   const [show, setShow] = useState(true);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmePassword, setConfirmePassword] = useState("");
+
   return (
     <main className="min-h-[884px] w-full flex items-center justify-center p-gutter relative bg-surface-container-low/40">
       <div className="relative bg-surface-container-lowest rounded-xl shadow-xl p-8 transition-all">
@@ -37,9 +42,14 @@ export default function Login() {
               <input
                 type="text"
                 id="fullname"
+                onChange={(e) => setFullName(e.target.value)}
+                value={fullName}
                 placeholder="Enter your name"
-                className="w-full h-[40px] pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-primary/20"
+                className="w-full h-[40px] outline-none pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-blue-600/50"
               />
+              <p className="text-red-600">
+                {fullName.length < 3 && fullName.length !== 0 && "invalid name"}
+              </p>
             </div>
           </div>
           <div>
@@ -53,9 +63,16 @@ export default function Login() {
               <input
                 type="email"
                 id="email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
                 placeholder="name@example.com"
-                className="w-full h-[40px] pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-primary/20"
+                className="w-full h-[40px] outline-none pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-blue-600/50"
               />
+              <p className="text-red-600">
+                {!email.includes("@gmail.com") &&
+                  email.length !== 0 &&
+                  "Invalid Email"}
+              </p>
             </div>
           </div>
           <div>
@@ -74,8 +91,15 @@ export default function Login() {
               <input
                 type="password"
                 id="password"
-                className="w-full h-[40px] pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-primary/20"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                className="w-full h-[40px] outline-none pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-blue-600/50"
               />
+              <p className="text-red-600">
+                {password.length < 6 &&
+                  password.length !== 0 &&
+                  "Your password must be greater than 6"}
+              </p>
             </div>
             <div>
               <p>
@@ -103,8 +127,11 @@ export default function Login() {
               <input
                 type="password"
                 id="confirmPassword"
-                className="w-full h-[40px] pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-primary/20"
+                onChange={(e) => setConfirmePassword(e.target.value)}
+                value={confirmePassword}
+                className="w-full h-[40px] outline-none pl-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md outline-none transition-shadow shadow-sm focus:ring-2 focus:ring-blue-600/50"
               />
+              <p>{confirmePassword.length !== password.length && "Must be equal to your password"}</p>
             </div>
             <p></p>
           </div>
