@@ -335,11 +335,16 @@ export default function SignUp() {
               Submit
           ========================= */}
 
-          {isValidForm && (
-            <button className="bg-blue-800 flex justify-center items-center gap-2 text-white py-3 px-4 rounded-md hover:bg-blue-700">
-              Create Account <ArrowRightIcon />
-            </button>
-          )}
+          <button
+            disabled={!isValidForm}
+            className={`bg-blue-800 flex justify-center items-center gap-2 text-white py-3 px-4 rounded-md hover:bg-blue-700${
+              isValidForm
+                ? "bg-blue-800 hover:bg-blue-700 cursor-pointer"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
+          >
+            Create Account <ArrowRightIcon />
+          </button>
         </form>
       </div>
     </main>
